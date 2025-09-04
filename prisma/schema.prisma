@@ -159,7 +159,7 @@ model Roupas {
   description  String
   howToGet     String
   location     String
-  releaseYear  Int
+  costOfCells  Int
   imageUrl     String
 
   createdAt DateTime @default(now())

@@ -1,154 +1,136 @@
-import CardModel from "../models/cardModel.js";
+import RoupasModel from "../models/roupasModel.js";
 
-class CardController {
-  // GET /cartas
-  async getAllCards(req, res) {
-    const raridade = req.query.raridade;
-    const ataque = req.query.ataque;
-    const pagina = req.query.pagina || 1;
-    const limite = req.query.limite || 10;
-
-    const name = req.query.name;
-
+class RoupaController {
+  // GET /api/roupas
+  async getAllRoupas(req, res) {
     try {
-      const cartas = await CardModel.findAll(
-        raridade,
-        ataque,
-        pagina,
-        limite,
-        name
-      );
-      res.json(cartas);
+      const roupas = await RoupasModel.findAll();
+      res.json(roupas);
     } catch (error) {
-      console.error("Erro ao buscar as cartas:", error);
-      res.status(500).json({ error: "Erro ao buscar as cartas" });
+      console.error("Erro ao buscar roupas:", error);
+      res.status(500).json({ error: "Erro ao buscar roupas" });
     }
   }
 
-  // GET /cartas/:id
-  async getCardById(req, res) {
+  // GET /api/roupas/:id
+  async getRoupaById(req, res) {
     try {
       const { id } = req.params;
 
-      const carta = await CardModel.findById(id);
+      const roupa = await RoupasModel.findById(id);
 
-      if (!carta) {
-        return res.status(404).json({ error: "Carta não encontrada!" });
+      if (!roupa) {
+        return res.status(404).json({ error: "Roupa não encontrada" });
       }
 
-      res.json(carta);
+      res.json(roupa);
     } catch (error) {
-      console.error("Erro ao buscar carta:", error);
-      res.status(500).json({ error: "Erro ao buscar carta!" });
+      console.error("Erro ao buscar roupa:", error);
+      res.status(500).json({ error: "Erro ao buscar roupa" });
     }
   }
 
-  // POST /cartas
-  async createCard(req, res) {
+  // POST /api/roupas
+  async createRoupa(req, res) {
     try {
-      // Captura dos dados do corpo da requisição (frontend)
+      // Validação básica
       const {
         name,
-        rarity,
-        attackPoints,
-        defensePoints,
-        imageUrl,
-        collectionId,
+        description,
+        howToGet,
+        location,
+        costOfCells,
+        imageUrl
       } = req.body;
 
-      // Verifica se todos os campos da carta foram fornecidos
+      // Verifica se todos os campos da roupa foram fornecidos
       if (
         !name ||
-        !rarity ||
-        !attackPoints ||
-        !defensePoints ||
-        !collectionId
+        !description ||
+        !howToGet ||
+        !location ||
+        !costOfCells ||
+        !imageUrl
       ) {
-        return res.status(400).json({
-          error:
-            "Os campos nome, raridade, pontos de ataque, pontos de defesa e o id da coleção são obrigatórios",
-        });
+        return res
+          .status(400)
+          .json({ error: "Todos os campos são obrigatórios" });
       }
 
-      // Criar a nova Carta
-      const newCard = await CardModel.create(
+      // Criar a nova roupa
+      const newRoupa = await RoupasModel.create(
         name,
-        rarity,
-        attackPoints,
-        defensePoints,
-        imageUrl,
-        collectionId
+        description,
+        howToGet,
+        location,
+        costOfCells,
+        imageUrl
       );
 
-      if (!newCard) {
-        return res.status(400).json({ error: "Erro ao criar carta" });
+      if (!newRoupa) {
+        return res.status(400).json({ error: "Erro ao criar roupa" });
       }
 
-      res.status(201).json({
-        message: "Carta criada com sucesso",
-        newCard,
-      });
+      res.status(201).json(newRoupa);
     } catch (error) {
-      console.error("Erro ao criar Carta:", error);
-      res.status(500).json({ error: "Erro ao criar Carta" });
+      console.error("Erro ao criar roupa:", error);
+      res.status(500).json({ error: "Erro ao criar roupa" });
     }
   }
 
-  // PUT /cartas/:id
-  async updateCard(req, res) {
+  // PUT /api/roupas/:id
+  async updateRoupa(req, res) {
     try {
       const { id } = req.params;
       const {
         name,
-        rarity,
-        attackPoints,
-        defensePoints,
-        imageUrl,
-        collectionId,
+        description,
+        howToGet,
+        location,
+        costOfCells,
+        imageUrl
       } = req.body;
 
-      // Atualizar a Carta
-      const updatedCard = await CardModel.update(
+      // Atualizar a roupa
+      const updatedRoupa = await RoupasModel.update(
         id,
         name,
-        rarity,
-        attackPoints,
-        defensePoints,
-        imageUrl,
-        collectionId
+        description,
+        howToGet,
+        location,
+        costOfCells,
+        imageUrl
       );
 
-      if (!updatedCard) {
-        return res.status(404).json({ error: "Carta não encontrada" });
+      if (!updatedRoupa) {
+        return res.status(404).json({ error: "Roupa não encontrado" });
       }
 
-      res.json(updatedCard);
+      res.json(updatedRoupa);
     } catch (error) {
-      console.error("Erro ao atualizar Carta:", error);
-      res.status(500).json({ error: "Erro ao atualizar Carta!" });
+      console.error("Erro ao atualizar roupa:", error);
+      res.status(500).json({ error: "Erro ao atualizar roupa" });
     }
   }
 
-  // DELETE /cartas/:id
-  async deleteCard(req, res) {
+  // DELETE /api/roupas/:id
+  async deleteRoupa(req, res) {
     try {
       const { id } = req.params;
 
-      // Remover a Carta
-      const result = await CardModel.delete(id);
+      // Remover a roupa
+      const result = await RoupasModel.delete(id);
 
       if (!result) {
-        return res.status(404).json({ error: "Carta não encontrada!" });
+        return res.status(404).json({ error: "Roupa não encontrada" });
       }
 
-      res.status(200).json({
-        message: "Carta removida com sucesso",
-      });
+      res.status(204).end(); // Resposta sem conteúdo
     } catch (error) {
-      console.error("Erro ao remover Carta:", error);
-      res.status(500).json({ error: "Erro ao remover Carta!" });
+      console.error("Erro ao remover roupa:", error);
+      res.status(500).json({ error: "Erro ao remover roupa" });
     }
   }
 }
 
-export default new CardController();
+export default new RoupaController();

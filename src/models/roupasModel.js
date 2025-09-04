@@ -1,121 +1,109 @@
 import prisma from "../../prisma/prisma.js";
 
-class PersonagemModel {
-  // Obter todos os personagens
+class RoupasModel {
+  // Obter todas as roupas
   async findAll() {
-    const personagens = await prisma.personagem.findMany({
+    const roupas = await prisma.roupas.findMany({
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    console.log(personagens);
+    console.log(roupas);
 
-    return personagens;
+    return roupas;
   }
 
-  // Obter um personagem pelo ID
+  // Obter uma roupa pelo ID
   async findById(id) {
-    const personagem = await prisma.personagem.findUnique({
+    const roupa = await prisma.roupas.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    return personagem;
+    return roupa;
   }
 
-  // Criar um novo personagem
+  // Criar uma nova roupa
   async create(
-    title,
+    name,
     description,
-    episodes,
-    releaseYear,
-    studio,
-    genres,
-    rating,
+    howToGet,
+    location,
+    costOfCells,
     imageUrl
   ) {
-    const newPersonagem = await prisma.personagem.create({
+    const newRoupa = await prisma.roupas.create({
       data: {
-        title,
+        name,
         description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
+        howToGet,
+        location,
+        costOfCells,
+        imageUrl
       },
     });
 
-    return newPersonagem;
+    return newRoupa;
   }
 
-  // Atualizar um personagem
+  // Atualizar uma roupa
   async update(
     id,
-    title,
+    name,
     description,
-    episodes,
-    releaseYear,
-    studio,
-    genres,
-    rating,
+    howToGet,
+    location,
+    costOfCells,
     imageUrl
   ) {
-    const personagem = await this.findById(id);
+    const roupa = await this.findById(id);
 
-    if (!personagem) {
+    if (!roupa) {
       return null;
     }
 
-    // Atualize o personagem existente com os novos dados
+    // Atualize a roupa existente com os novos dados
     const data = {};
-    if (title !== undefined) {
-      data.title = title;
+    if (name !== undefined) {
+      data.name = name;
     }
     if (description !== undefined) {
       data.description = description;
     }
-    if (episodes !== undefined) {
-      data.episodes = episodes;
+    if (howToGet !== undefined) {
+      data.howToGet = howToGet;
     }
-    if (releaseYear !== undefined) {
-      data.releaseYear = releaseYear;
+    if (location !== undefined) {
+      data.location = location;
     }
-    if (studio !== undefined) {
-      data.studio = studio;
-    }
-    if (genres !== undefined) {
-      data.genres = genres;
-    }
-    if (rating !== undefined) {
-      data.rating = rating;
+    if (costOfCells !== undefined) {
+      data.costOfCells = costOfCells;
     }
     if (imageUrl !== undefined) {
       data.imageUrl = imageUrl;
     }
 
-    const personagemUpdated = await prisma.personagem.update({
+    const roupaUpdated = await prisma.roupas.update({
       where: {
         id: Number(id),
       },
       data,
     });
 
-    return personagemUpdated;
+    return roupaUpdated;
   }
 
-  // Remover um personagem
+  // Remover uma roupa
   async delete(id) {
-    const personagem = await this.findById(id);
+    const roupa = await this.findById(id);
 
-    if (!personagem) {
+    if (!roupa) {
       return null;
     }
 
-    await prisma.personagem.delete({
+    await prisma.roupas.delete({
       where: {
         id: Number(id),
       },
@@ -125,4 +113,4 @@ class PersonagemModel {
   }
 }
 
-export default new PersonagemModel();
+export default new RoupasModel();
