@@ -13,19 +13,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model itensDeCura {
-  id          Int    @id @default(autoincrement())
-  name        String @unique
-  description String
-  location    String
-  howToGet    String
-  releaseYear Int
-  imageUrl    String
+model Personagem {
+  id Int @id @default(autoincrement())
+
+  npcs Npc[]
+  inimigos Inimigo[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("curas")
+  @@map("personagens")
 }
 
 model Inimigo {
@@ -36,6 +33,9 @@ model Inimigo {
   isBoss      Boolean
   releaseYear Int
   imageUrl    String
+
+  personagemId Int
+  personagem Personagem @relation(fields: [personagemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -52,12 +52,29 @@ model Npc {
   releaseYear Int
   imageUrl    String
 
+  personagemId Int
+  personagem Personagem @relation(fields: [personagemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("npcs")
 }
+model Item {
+  id Int @id @default(autoincrement())
+  name String @unique
+  description String
+  location String
 
+
+  armas Arma[]
+  curas itensDeCura[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("itens")
+}
 model Arma {
   id           Int    @id @default(autoincrement())
   name         String @unique
@@ -68,10 +85,31 @@ model Arma {
   releaseYear  Int
   imageUrl     String
 
+  itemId Int
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("armas")
+}
+
+model itensDeCura {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  location    String
+  howToGet    String
+  releaseYear Int
+  imageUrl    String
+
+    itemId Int
+    item Item @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("curas")
 }
 
 
