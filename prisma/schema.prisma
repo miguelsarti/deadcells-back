@@ -13,78 +13,119 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Anime {
-  id          Int     @id @default(autoincrement())
-  title       String
-  description String?
-  episodes    Int
+model itensDeCura {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  location    String
+  howToGet    String
   releaseYear Int
-  studio      String
-  genres      String
-  rating      Float
   imageUrl    String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("animes")
+  @@map("curas")
 }
 
-model Personagem {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String?
-  age         Int
-  power       Boolean
-  anime       String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("personagens")
-}
-
-model Collection {
+model Inimigo {
   id          Int     @id @default(autoincrement())
   name        String  @unique
-  description String?
+  description String
+  location    String
+  isBoss      Boolean
   releaseYear Int
-
-  // Segundo: marcação da lista de dados da tabela dependente
-  cards Card[]
+  imageUrl    String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("collections")
+  @@map("inimigos")
 }
 
-model Card {
-  id            Int     @id @default(autoincrement())
-  name          String  @unique
-  rarity        String
-  attackPoints  Int
-  defensePoints Int
-  imageUrl      String?
-
-  // Primeiro: configuração da tabela dependente
-  collectionId Int
-  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+model Npc {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  location    String
+  function    String
+  releaseYear Int
+  imageUrl    String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("cards")
+  @@map("npcs")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
+model Arma {
+  id           Int    @id @default(autoincrement())
+  name         String @unique
+  description  String
+  location     String
+  typeOfWeapon String
+  costOfCells Int
+  releaseYear  Int
+  imageUrl     String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("users")
+  @@map("armas")
+}
+
+
+model Mapa {
+  id           Int    @id @default(autoincrement())
+  name         String @unique
+  description  String
+  scrollFragments Int
+  releaseYear  String
+  imageUrl     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("mapas")
+}
+
+model Mutacao {
+  id           Int    @id @default(autoincrement())
+  name         String @unique
+  description  String
+  howToGet     String
+  location     String
+  releaseYear  Int
+  imageUrl     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("mutacoes")
+}
+
+model Celulas {
+  id           Int    @id @default(autoincrement())
+  name         String @unique
+  description  String
+  imageUrl     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("celulas")
+}
+model Roupas {
+  id           Int    @id @default(autoincrement())
+  name         String @unique
+  description  String
+  howToGet     String
+  location     String
+  releaseYear  Int
+  imageUrl     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("roupas")
 }
