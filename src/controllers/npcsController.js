@@ -1,109 +1,131 @@
-import UserModel from "../models/userModel.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import NpcsModel from "../models/npcsModel.js";
 
-class AuthController {
-  // Listar todos os usuários
-  async getAllUsers(req, res) {
+class NpcsController {
+  // GET /api/npcs
+  async getAllNpcs(req, res) {
     try {
-      const users = await UserModel.findAll();
-      res.json(users);
+      const npcs = await NpcsModel.findAll();
+      res.json(npcs);
     } catch (error) {
-      console.error("Erro ao listar usuários:", error);
-      res.status(500).json({ error: "Erro ao listar usuários" });
+      console.error("Erro ao buscar npcs:", error);
+      res.status(500).json({ error: "Erro ao buscar npcs" });
     }
   }
 
-  // Registrar novo usuário
-  async register(req, res) {
+  // GET /api/npcs/:id
+  async getNpcById(req, res) {
     try {
-      const { name, email, password } = req.body;
+      const { id } = req.params;
 
+      const npc = await NpcsModel.findById(id);
+
+      if (!npc) {
+        return res.status(404).json({ error: "NPC não encontrado" });
+      }
+
+      res.json(npc);
+    } catch (error) {
+      console.error("Erro ao buscar npc:", error);
+      res.status(500).json({ error: "Erro ao buscar npc" });
+    }
+  }
+
+  // POST /api/npcs
+  async createNpc(req, res) {
+    try {
       // Validação básica
-      if (!name || !email || !password) {
-        return res
-          .status(400)
-          .json({ error: "Os campos nome, email e senha são obrigatórios!" });
-      }
-
-      // Verificar se o usuário já existe
-      const userExists = await UserModel.findByEmail(email);
-      if (userExists) {
-        return res.status(400).json({ error: "Este email já está em uso!" });
-      }
-
-      // Hash da senha
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Criar objeto do usuário
-      const data = {
+      const {
         name,
-        email,
-        password: hashedPassword,
-      };
+        description,
+        location,
+        functionNpc,
+        imageUrl
+      } = req.body;
 
-      // Criar usuário
-      const user = await UserModel.create(data);
+      // Verifica se todos os campos do npc foram fornecidos
+      if (
+        !name ||
+        !description ||
+        !location ||
+        !functionNpc ||
+        !imageUrl
+      ) {
+        return res
+          .status(400)
+          .json({ error: "Todos os campos são obrigatórios" });
+      }
 
-      return res.status(201).json({
-        message: "Usuário criado com sucesso!",
-        user,
-      });
+      // Criar o novo npc
+      const newNpc = await NpcsModel.create(
+        name,
+        description,
+        location,
+        functionNpc,
+        imageUrl
+      );
+
+      if (!newNpc) {
+        return res.status(400).json({ error: "Erro ao criar npc" });
+      }
+
+      res.status(201).json(newNpc);
     } catch (error) {
-      console.error("Erro ao criar um novo usuário: ", error);
-      res.status(500).json({ error: "Erro ao criar um novo usuário" });
+      console.error("Erro ao criar npc:", error);
+      res.status(500).json({ error: "Erro ao criar npc" });
     }
   }
 
-  async login(req, res) {
+  // PUT /api/npcs/:id
+  async updateNpc(req, res) {
     try {
-      const { email, password } = req.body;
+      const { id } = req.params;
+      const {
+        name,
+        description,
+        location,
+        functionNpc,
+        imageUrl
+      } = req.body;
 
-      // Validação básica
-      if (!email || !password) {
-        return res
-          .status(400)
-          .json({ error: "Os campos email e senha são obrigatórios!" });
-      }
-
-      // Verificar se o usuário existe
-      const userExists = await UserModel.findByEmail(email);
-      if (!userExists) {
-        return res.status(401).json({ error: "Credenciais inválidas!" });
-      }
-
-      // Verificar senha
-      const isPasswordValid = await bcrypt.compare(
-        password,
-        userExists.password
-      );
-      if (!isPasswordValid) {
-        return res.status(401).json({ error: "Credenciais inválidas!" });
-      }
-
-      // Gerar Token JWT
-      const token = jwt.sign(
-        {
-          id: userExists.id,
-          name: userExists.name,
-          email: userExists.email,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "24h",
-        }
+      // Atualizar o npc
+      const updatedNpc = await NpcsModel.update(
+        id,
+        name,
+        description,
+        location,
+        functionNpc,
+        imageUrl
       );
 
-      return res.json({
-        message: "Login realizado com sucesso!",
-        token,
-        userExists,
-      });
+      if (!updatedNpc) {
+        return res.status(404).json({ error: "NPC não encontrado" });
+      }
+
+      res.json(updatedNpc);
     } catch (error) {
-      console.error("Erro ao fazer login: ", error);
-      res.status(500).json({ error: "Erro ao fazer login!" });
+      console.error("Erro ao atualizar npc:", error);
+      res.status(500).json({ error: "Erro ao atualizar npc" });
+    }
+  }
+
+  // DELETE /api/npcs/:id
+  async deleteNpc(req, res) {
+    try {
+      const { id } = req.params;
+
+      // Remover o npc
+      const result = await NpcsModel.delete(id);
+
+      if (!result) {
+        return res.status(404).json({ error: "NPC não encontrado" });
+      }
+
+      res.status(204).end(); // Resposta sem conteúdo
+    } catch (error) {
+      console.error("Erro ao remover npc:", error);
+      res.status(500).json({ error: "Erro ao remover npc" });
     }
   }
 }
 
-export default new AuthController();
+export default new NpcsController();

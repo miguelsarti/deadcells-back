@@ -1,114 +1,136 @@
-import CollectionModel from "../models/collectionModel.js";
+import MutacoesModel from "../models/mutacoesModel.js";
 
-class CollectionController {
-  // GET /colecoes
-  async getAllCollections(req, res) {
+class MutacoesController {
+  // GET /api/mutacoes
+  async getAllMutacoes(req, res) {
     try {
-      const colecoes = await CollectionModel.findAll();
-      res.json(colecoes);
+      const mutacoes = await MutacoesModel.findAll();
+      res.json(mutacoes);
     } catch (error) {
-      console.error("Erro ao buscar as coleções:", error);
-      res.status(500).json({ error: "Erro ao buscar as coleções" });
+      console.error("Erro ao buscar mutações:", error);
+      res.status(500).json({ error: "Erro ao buscar mutações" });
     }
   }
 
-  // GET /colecoes/:id
-  async getCollectionById(req, res) {
+  // GET /api/mutacoes/:id
+  async getMutacaoById(req, res) {
     try {
       const { id } = req.params;
 
-      const colecao = await CollectionModel.findById(id);
+      const mutacao = await MutacoesModel.findById(id);
 
-      if (!colecao) {
-        return res.status(404).json({ error: "Coleção não encontrada!" });
+      if (!mutacao) {
+        return res.status(404).json({ error: "Mutação não encontrada" });
       }
 
-      res.json(colecao);
+      res.json(mutacao);
     } catch (error) {
-      console.error("Erro ao buscar coleção:", error);
-      res.status(500).json({ error: "Erro ao buscar coleção!" });
+      console.error("Erro ao buscar mutação:", error);
+      res.status(500).json({ error: "Erro ao buscar mutação" });
     }
   }
 
-  // POST /colecoes
-  async createCollection(req, res) {
+  // POST /api/mutacoes
+  async createMutacao(req, res) {
     try {
       // Validação básica
-      const { name, description, releaseYear } = req.body;
-
-      // Verifica se todos os campos da coleção foram fornecidos
-      if (!name || !releaseYear) {
-        return res.status(400).json({
-          error: "Os campos nome e ano de lançamento são obrigatórios",
-        });
-      }
-
-      // Criar a nova coleção
-      const newCollection = await CollectionModel.create(
+      const {
         name,
         description,
-        releaseYear
-      );
+        howToGet,
+        location,
+        costOfCells,
+        imageUrl
+      } = req.body;
 
-      if (!newCollection) {
-        return res.status(400).json({ error: "Erro ao criar coleção" });
+      // Verifica se todos os campos da mutação foram fornecidos
+      if (
+        !name ||
+        !description ||
+        !howToGet ||
+        !location ||
+        !costOfCells ||
+        !imageUrl
+      ) {
+        return res
+          .status(400)
+          .json({ error: "Todos os campos são obrigatórios" });
       }
 
-      res.status(201).json({
-        message: "Coleção criada com sucesso",
-        newCollection,
-      });
+      // Criar a nova mutação
+      const newMutacao = await MutacoesModel.create(
+        name,
+        description,
+        howToGet,
+        location,
+        costOfCells,
+        imageUrl
+      );
+
+      if (!newMutacao) {
+        return res.status(400).json({ error: "Erro ao criar mutação" });
+      }
+
+      res.status(201).json(newMutacao);
     } catch (error) {
-      console.error("Erro ao criar coleção:", error);
-      res.status(500).json({ error: "Erro ao criar coleção" });
+      console.error("Erro ao criar mutação:", error);
+      res.status(500).json({ error: "Erro ao criar mutação" });
     }
   }
 
-  // PUT /colecoes/:id
-  async updateCollection(req, res) {
+  // PUT /api/mutacoes/:id
+  async updateMutacao(req, res) {
     try {
       const { id } = req.params;
-      const { name, description, releaseYear } = req.body;
+      const {
+        name,
+        description,
+        howToGet,
+        location,
+        costOfCells,
+        imageUrl
+      } = req.body;
 
-      // Atualizar a coleção
-      const updatedCollection = await CollectionModel.update(
+      // Atualizar a mutação
+      const updatedMutacao = await MutacoesModel.update(
         id,
         name,
         description,
-        releaseYear
+        howToGet,
+        location,
+        costOfCells,
+        imageUrl
       );
 
-      if (!updatedCollection) {
-        return res.status(404).json({ error: "Coleção não encontrada" });
+      if (!updatedMutacao) {
+        return res.status(404).json({ error: "Mutação não encontrado" });
       }
 
-      res.json(updatedCollection);
+      res.json(updatedMutacao);
     } catch (error) {
-      console.error("Erro ao atualizar coleção:", error);
-      res.status(500).json({ error: "Erro ao atualizar coleção!" });
+      console.error("Erro ao atualizar mutação:", error);
+      res.status(500).json({ error: "Erro ao atualizar mutação" });
     }
   }
 
-  // DELETE /colecoes/:id
-  async deleteCollection(req, res) {
+  // DELETE /api/mutacoes/:id
+  async deleteMutacao(req, res) {
     try {
       const { id } = req.params;
 
-      // Remover a coleção
-      const result = await CollectionModel.delete(id);
+      // Remover a mutação
+      const result = await MutacoesModel.delete(id);
 
       if (!result) {
-        return res.status(404).json({ error: "Coleção não encontrada!" });
+        return res.status(404).json({ error: "Mutação não encontrada" });
       }
 
-      res.status(200).json({
-        message: "Coleção removida com sucesso",
-      });
+      res.status(204).end(); // Resposta sem conteúdo
     } catch (error) {
-      console.error("Erro ao remover coleção:", error);
-      res.status(500).json({ error: "Erro ao remover coleção!" });
+      console.error("Erro ao remover mutação:", error);
+      res.status(500).json({ error: "Erro ao remover mutação" });
     }
   }
 }
 
-export default new CollectionController();
+export default new MutacoesController();

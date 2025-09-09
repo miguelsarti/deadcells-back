@@ -1,66 +1,91 @@
 import prisma from "../../prisma/prisma.js";
 
-class UserModel {
-  // Obter todos os usuários
+class PersonagensModel {
+  // Obter todos os personagens
   async findAll() {
-    const users = await prisma.user.findMany();
+    const personagens = await prisma.personagem.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include  : {
+        npcs: true,
+        inimigos: true,
+        }
+    });
 
-    return users;
+  console.log(personagens);
+
+  return personagens;
   }
 
-  // Obter um usuário pelo ID
+  // Obter um personagem pelo ID
   async findById(id) {
-    const user = await prisma.user.findUnique({
+    const personagem = await prisma.personagem.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    return user;
+  return personagem;
   }
 
-  // Obter um usuário pelo email
-  async findByEmail(email) {
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+  // Criar um novo personagem
+  async create(
+    name,
+  ) {
+  const newPersonagem = await prisma.personagem.create({
+    data: {
+      name,
+    },
+  });
 
-    return user;
-  }
-
-  // Criar um novo usuário
-  async create(data) {
-    const user = await prisma.user.create({
-      data,
-    });
-
-    return user;
-  }
-
-  // Atualizar um usuário
-  async update(id, data) {
-    const user = await prisma.user.update({
-      where: {
-        id: Number(id),
-      },
-      data,
-    });
-
-    return user;
-  }
-
-  // Excluir um usuário
-  async delete(id) {
-    await prisma.user.delete({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    return true;
-  }
+  return newPersonagem;
 }
 
-export default new UserModel();
+  // Atualizar um personagem
+  async update(
+  id,
+  name,
+
+) {
+  const personagem = await this.findById(id);
+
+  if (!personagem) {
+    return null;
+  }
+
+  // Atualize o personagem existente com os novos dados
+  const data = {};
+  if (name !== undefined) {
+    data.title = title;
+  }
+
+  const personagemUpdated = await prisma.personagem.update({
+    where: {
+      id: Number(id),
+    },
+    data,
+  });
+
+  return personagemUpdated;
+}
+
+  // Remover um personagem
+  async delete (id) {
+  const personagem = await this.findById(id);
+
+  if (!personagem) {
+    return null;
+  }
+
+  await prisma.personagem.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  return true;
+}
+}
+
+export default new PersonagensModel();

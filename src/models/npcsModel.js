@@ -1,66 +1,110 @@
 import prisma from "../../prisma/prisma.js";
 
-class UserModel {
-  // Obter todos os usuários
+class NpcsModel {
+  // Obter todos os npcs
   async findAll() {
-    const users = await prisma.user.findMany();
+    const npcs = await prisma.npc.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-    return users;
+    console.log(npcs);
+
+    return npcs;
   }
 
-  // Obter um usuário pelo ID
+  // Obter um npc pelo ID
   async findById(id) {
-    const user = await prisma.user.findUnique({
+    const npc = await prisma.npc.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    return user;
+    return npc;
   }
 
-  // Obter um usuário pelo email
-  async findByEmail(email) {
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+  // Criar um novo npc
+  async create(
+    name,
+    description,
+    location,
+    functionNpc,
+    imageUrl
+  ) {
+  const newNpc = await prisma.npc.create({
+    data: {
+      name,
+      description,
+      location,
+      functionNpc,
+      imageUrl
+    },
+  });
 
-    return user;
-  }
-
-  // Criar um novo usuário
-  async create(data) {
-    const user = await prisma.user.create({
-      data,
-    });
-
-    return user;
-  }
-
-  // Atualizar um usuário
-  async update(id, data) {
-    const user = await prisma.user.update({
-      where: {
-        id: Number(id),
-      },
-      data,
-    });
-
-    return user;
-  }
-
-  // Excluir um usuário
-  async delete(id) {
-    await prisma.user.delete({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    return true;
-  }
+  return newNpc;
 }
 
-export default new UserModel();
+  // Atualizar um npc
+  async update(
+  id,
+  name,
+  description,
+  location,
+  functionNpc,
+  imageUrl
+) {
+  const npc = await this.findById(id);
+
+  if (!npc) {
+    return null;
+  }
+
+  // Atualize o npc existente com os novos dados
+  const data = {};
+  if (name !== undefined) {
+    data.name = name;
+  }
+  if (description !== undefined) {
+    data.description = description;
+  }
+  if (location !== undefined) {
+    data.location = location;
+  }
+  if (functionNpc !== undefined) {
+    data.functionNpc = functionNpc;
+  }
+  if (imageUrl !== undefined) {
+    data.imageUrl = imageUrl;
+  }
+
+  const npcUpdated = await prisma.npc.update({
+    where: {
+      id: Number(id),
+    },
+    data,
+  });
+
+  return npcUpdated;
+}
+
+  // Remover um npc
+  async delete (id) {
+  const npc = await this.findById(id);
+
+  if (!npc) {
+    return null;
+  }
+
+  await prisma.npc.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  return true;
+}
+}
+
+export default new NpcsModel();

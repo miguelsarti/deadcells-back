@@ -13,8 +13,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Personagem {
-  id Int @id @default(autoincrement())
+model ListaDePersonagens {
+  id          Int     @id @default(autoincrement())
+  title String
 
   npcs Npc[]
   inimigos Inimigo[]
@@ -30,8 +31,8 @@ model Inimigo {
   name        String  @unique
   description String
   location    String
+  drop        String
   isBoss      Boolean
-  releaseYear Int
   imageUrl    String
 
   personagemId Int
@@ -48,8 +49,7 @@ model Npc {
   name        String @unique
   description String
   location    String
-  function    String
-  releaseYear Int
+  functionNpc    String
   imageUrl    String
 
   personagemId Int
@@ -60,21 +60,7 @@ model Npc {
 
   @@map("npcs")
 }
-model Item {
-  id Int @id @default(autoincrement())
-  name String @unique
-  description String
-  location String
 
-
-  armas Arma[]
-  curas itensDeCura[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("itens")
-}
 model Arma {
   id           Int    @id @default(autoincrement())
   name         String @unique
@@ -82,11 +68,8 @@ model Arma {
   location     String
   typeOfWeapon String
   costOfCells Int
-  releaseYear  Int
+  howToGet    String
   imageUrl     String
-
-  itemId Int
-  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -94,66 +77,7 @@ model Arma {
   @@map("armas")
 }
 
-model itensDeCura {
-  id          Int    @id @default(autoincrement())
-  name        String @unique
-  description String
-  location    String
-  howToGet    String
-  releaseYear Int
-  imageUrl    String
-
-    itemId Int
-    item Item @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("curas")
-}
-
-
-model Mapa {
-  id           Int    @id @default(autoincrement())
-  name         String @unique
-  description  String
-  scrollFragments Int
-  releaseYear  String
-  imageUrl     String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("mapas")
-}
-
 model Mutacao {
-  id           Int    @id @default(autoincrement())
-  name         String @unique
-  description  String
-  howToGet     String
-  location     String
-  releaseYear  Int
-  imageUrl     String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("mutacoes")
-}
-
-model Celulas {
-  id           Int    @id @default(autoincrement())
-  name         String @unique
-  description  String
-  imageUrl     String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("celulas")
-}
-model Roupas {
   id           Int    @id @default(autoincrement())
   name         String @unique
   description  String
@@ -165,5 +89,5 @@ model Roupas {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("roupas")
+  @@map("mutacoes")
 }

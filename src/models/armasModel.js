@@ -1,59 +1,115 @@
 import prisma from "../../prisma/prisma.js";
 
-class UserModel {
-  // Obter todos os usuários
+class ArmasModel {
+  // Obter todas as armas
   async findAll() {
-    const users = await prisma.user.findMany();
+    const armas = await prisma.arma.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-    return users;
+    console.log(armas);
+
+    return armas;
   }
 
-  // Obter um usuário pelo ID
+  // Obter uma arma pelo ID
   async findById(id) {
-    const user = await prisma.user.findUnique({
+    const arma = await prisma.arma.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    return user;
+    return arma;
   }
 
-  // Obter um usuário pelo email
-  async findByEmail(email) {
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
+  // Criar uma nova arma
+  async create(
+    name,
+    description,
+    location,
+    typeOfWeapon,
+    costOfCells,
+    howToGet,
+    imageUrl
+  ) {
+    const newArma = await prisma.arma.create({
+      data: {
+        name,
+        description,
+        location,
+        typeOfWeapon,
+        costOfCells,
+        howToGet,
+        imageUrl
       },
     });
 
-    return user;
+    return newArma;
   }
 
-  // Criar um novo usuário
-  async create(data) {
-    const user = await prisma.user.create({
-      data,
-    });
+  // Atualizar uma arma
+  async update(
+    id,
+    name, 
+    description,
+    location,
+    typeOfWeapon,
+    costOfCells,
+    howToGet,
+    imageUrl
+  ) {
+    const arma = await this.findById(id);
 
-    return user;
-  }
+    if (!arma) {
+      return null;
+    }
 
-  // Atualizar um usuário
-  async update(id, data) {
-    const user = await prisma.user.update({
+    // Atualize a arma existente com os novos dados
+    const data = {};
+    if (name !== undefined) {
+      data.name = name;
+    }
+    if (description !== undefined) {
+      data.description = description;
+    }
+    if (location !== undefined) {
+      data.location = location;
+    }
+    if (typeOfWeapon !== undefined) {
+      data.typeOfWeapon = typeOfWeapon;
+    }
+    if (costOfCells !== undefined) {
+      data.costOfCells = costOfCells;
+    }
+    if (howToGet !== undefined) {
+      data.howToGet = howToGet;
+    }
+    if (imageUrl !== undefined) {
+      data.imageUrl = imageUrl;
+    }
+
+    const armaUpdated = await prisma.arma.update({
       where: {
         id: Number(id),
       },
       data,
     });
 
-    return user;
+    return armaUpdated;
   }
 
-  // Excluir um usuário
+  // Remover uma arma
   async delete(id) {
-    await prisma.user.delete({
+    const arma = await this.findById(id);
+
+    if (!arma) {
+      return null;
+    }
+
+    await prisma.arma.delete({
       where: {
         id: Number(id),
       },
@@ -63,4 +119,4 @@ class UserModel {
   }
 }
 
-export default new UserModel();
+export default new ArmasModel();

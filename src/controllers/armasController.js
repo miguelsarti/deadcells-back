@@ -1,114 +1,141 @@
-import CollectionModel from "../models/collectionModel.js";
+import ArmasModel from "../models/armasModel.js";
 
-class CollectionController {
-  // GET /colecoes
-  async getAllCollections(req, res) {
+class ArmasController {
+  // GET /api/armas
+  async getAllArmas(req, res) {
     try {
-      const colecoes = await CollectionModel.findAll();
-      res.json(colecoes);
+      const armas = await ArmasModel.findAll();
+      res.json(armas);
     } catch (error) {
-      console.error("Erro ao buscar as coleções:", error);
-      res.status(500).json({ error: "Erro ao buscar as coleções" });
+      console.error("Erro ao buscar armas:", error);
+      res.status(500).json({ error: "Erro ao buscar armas" });
     }
   }
 
-  // GET /colecoes/:id
-  async getCollectionById(req, res) {
+  // GET /api/armas/:id
+  async getArmaById(req, res) {
     try {
       const { id } = req.params;
 
-      const colecao = await CollectionModel.findById(id);
+      const arma = await ArmasModel.findById(id);
 
-      if (!colecao) {
-        return res.status(404).json({ error: "Coleção não encontrada!" });
+      if (!arma) {
+        return res.status(404).json({ error: "Arma não encontrada" });
       }
 
-      res.json(colecao);
+      res.json(arma);
     } catch (error) {
-      console.error("Erro ao buscar coleção:", error);
-      res.status(500).json({ error: "Erro ao buscar coleção!" });
+      console.error("Erro ao buscar arma:", error);
+      res.status(500).json({ error: "Erro ao buscar arma" });
     }
   }
 
-  // POST /colecoes
-  async createCollection(req, res) {
+  // POST /api/armas
+  async createArma(req, res) {
     try {
       // Validação básica
-      const { name, description, releaseYear } = req.body;
+      const {
+    name,
+    description,
+    location,
+    typeOfWeapon,
+    costOfCells,
+    howToGet,
+    imageUrl
+      } = req.body;
 
-      // Verifica se todos os campos da coleção foram fornecidos
-      if (!name || !releaseYear) {
-        return res.status(400).json({
-          error: "Os campos nome e ano de lançamento são obrigatórios",
-        });
+      // Verifica se todos os campos da arma foram fornecidos
+      if (
+        !name ||
+        !description ||
+        !location ||
+        !typeOfWeapon ||
+        !costOfCells ||
+        !howToGet ||
+        !imageUrl
+      ) {
+        return res
+          .status(400)
+          .json({ error: "Todos os campos são obrigatórios" });
       }
 
-      // Criar a nova coleção
-      const newCollection = await CollectionModel.create(
+      // Criar a nova arma
+      const newArma = await ArmasModel.create(
         name,
         description,
-        releaseYear
+        location,
+        typeOfWeapon,
+        costOfCells,
+        howToGet,
+        imageUrl
       );
 
-      if (!newCollection) {
-        return res.status(400).json({ error: "Erro ao criar coleção" });
+      if (!newArma) {
+        return res.status(400).json({ error: "Erro ao criar arma" });
       }
 
-      res.status(201).json({
-        message: "Coleção criada com sucesso",
-        newCollection,
-      });
+      res.status(201).json(newArma);
     } catch (error) {
-      console.error("Erro ao criar coleção:", error);
-      res.status(500).json({ error: "Erro ao criar coleção" });
+      console.error("Erro ao criar arma:", error);
+      res.status(500).json({ error: "Erro ao criar arma" });
     }
   }
 
-  // PUT /colecoes/:id
-  async updateCollection(req, res) {
+  // PUT /api/armas/:id
+  async updateArma(req, res) {
     try {
       const { id } = req.params;
-      const { name, description, releaseYear } = req.body;
+      const {
+        name,
+        description,
+        location,
+        typeOfWeapon,
+        costOfCells,
+        howToGet,
+        imageUrl
+      } = req.body;
 
-      // Atualizar a coleção
-      const updatedCollection = await CollectionModel.update(
+      // Atualizar a arma
+      const updatedArma = await ArmasModel.update(
         id,
         name,
         description,
-        releaseYear
+        location,
+        typeOfWeapon,
+        costOfCells,
+        howToGet,
+        imageUrl
       );
 
-      if (!updatedCollection) {
-        return res.status(404).json({ error: "Coleção não encontrada" });
+      if (!updatedArma) {
+        return res.status(404).json({ error: "Arma não encontrada" });
       }
 
-      res.json(updatedCollection);
+      res.json(updatedArma);
     } catch (error) {
-      console.error("Erro ao atualizar coleção:", error);
-      res.status(500).json({ error: "Erro ao atualizar coleção!" });
+      console.error("Erro ao atualizar arma:", error);
+      res.status(500).json({ error: "Erro ao atualizar arma" });
     }
   }
 
-  // DELETE /colecoes/:id
-  async deleteCollection(req, res) {
+  // DELETE /api/armas/:id
+  async deleteArma(req, res) {
     try {
       const { id } = req.params;
 
-      // Remover a coleção
-      const result = await CollectionModel.delete(id);
+      // Remover a arma
+      const result = await ArmasModel.delete(id);
 
       if (!result) {
-        return res.status(404).json({ error: "Coleção não encontrada!" });
+        return res.status(404).json({ error: "Arma não encontrada" });
       }
 
-      res.status(200).json({
-        message: "Coleção removida com sucesso",
-      });
+      res.status(204).end(); // Resposta sem conteúdo
     } catch (error) {
-      console.error("Erro ao remover coleção:", error);
-      res.status(500).json({ error: "Erro ao remover coleção!" });
+      console.error("Erro ao remover arma:", error);
+      res.status(500).json({ error: "Erro ao remover arma" });
     }
   }
 }
 
-export default new CollectionController();
+export default new ArmasController();

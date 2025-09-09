@@ -4,13 +4,20 @@ import express from "express";
 import authRouter from "./auth.routes.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
-import roupasRouter from "./roupaRoutes.js";
+import mutacoesRouter from "./mutacoesRoutes.js";
+import armasRouter from "./armasRoutes.js";
+import npcsRouter from "./npcsRoutes.js";
+import personagensRouter from "./personagensRoutes.js";
 
 const router = express.Router();
 
 // Rotas públicas
 router.use("/auth", authRouter);
-router.use("/roupas", roupasRouter);
+router.use("/mutacoes", mutacoesRouter);
+router.use("/armas", armasRouter);
+router.use("/npcs", npcsRouter);
+router.use("/personagens", personagensRouter);
+
 // Rotas protegidas
 router.use(authMiddleware);
 

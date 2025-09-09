@@ -1,10 +1,10 @@
-import PersonagemModel from "../models/personagemModel.js";
+import PersonagensModel from "../models/personagensModel.js";
 
-class PersonagemController {
+class PersonagensController {
   // GET /api/personagens
   async getAllPersonagens(req, res) {
     try {
-      const personagens = await PersonagemModel.findAll();
+      const personagens = await PersonagensModel.findAll();
       res.json(personagens);
     } catch (error) {
       console.error("Erro ao buscar personagens:", error);
@@ -16,13 +16,10 @@ class PersonagemController {
   async getPersonagemById(req, res) {
     try {
       const { id } = req.params;
-
-      const personagem = await PersonagemModel.findById(id);
-
+      const personagem = await PersonagensModel.findById(id);
       if (!personagem) {
         return res.status(404).json({ error: "Personagem não encontrado" });
       }
-
       res.json(personagem);
     } catch (error) {
       console.error("Erro ao buscar personagem:", error);
@@ -35,42 +32,16 @@ class PersonagemController {
     try {
       // Validação básica
       const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
+        name,
       } = req.body;
 
-      // Verifica se todos os campos do personagem foram fornecidos
-      if (
-        !title ||
-        !description ||
-        !episodes ||
-        !releaseYear ||
-        !studio ||
-        !genres ||
-        !rating ||
-        !imageUrl
-      ) {
-        return res
-          .status(400)
-          .json({ error: "Todos os campos são obrigatórios" });
+      if (!name) {
+        return res.status(400).json({ error: "Todos os campos são obrigatórios" });
       }
 
       // Criar o novo personagem
-      const newPersonagem = await PersonagemModel.create(
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
+      const newPersonagem = await PersonagensModel.create(
+        name,
       );
 
       if (!newPersonagem) {
@@ -89,27 +60,15 @@ class PersonagemController {
     try {
       const { id } = req.params;
       const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
+        name,
+
       } = req.body;
 
       // Atualizar o personagem
-      const updatedPersonagem = await PersonagemModel.update(
+      const updatedPersonagem = await PersonagensModel.update(
         id,
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
+        name,
+
       );
 
       if (!updatedPersonagem) {
@@ -127,14 +86,11 @@ class PersonagemController {
   async deletePersonagem(req, res) {
     try {
       const { id } = req.params;
-
       // Remover o personagem
-      const result = await PersonagemModel.delete(id);
-
+      const result = await PersonagensModel.delete(id);
       if (!result) {
         return res.status(404).json({ error: "Personagem não encontrado" });
       }
-
       res.status(204).end(); // Resposta sem conteúdo
     } catch (error) {
       console.error("Erro ao remover personagem:", error);
@@ -143,4 +99,4 @@ class PersonagemController {
   }
 }
 
-export default new PersonagemController();
+export default new PersonagensController();

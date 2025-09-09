@@ -1,91 +1,109 @@
 import prisma from "../../prisma/prisma.js";
 
-class CollectionModel {
-  // Obter todas as coleções
+class MutacoesModel {
+  // Obter todas as mutações
   async findAll() {
-    const colecoes = await prisma.collection.findMany({
+    const mutacoes = await prisma.mutacao.findMany({
       orderBy: {
         createdAt: "desc",
       },
-      include: {
-        cards: true,
-      },
     });
 
-    // console.log(colecoes);
+    console.log(mutacoes);
 
-    return colecoes;
+    return mutacoes;
   }
 
-  // Obter uma coleção pelo ID
+  // Obter uma mutacao pelo ID
   async findById(id) {
-    const colecao = await prisma.collection.findUnique({
+    const mutacao = await prisma.mutacao.findUnique({
       where: {
         id: Number(id),
       },
-      include: {
-        cards: true,
-      },
     });
 
-    return colecao;
+    return mutacao;
   }
 
-  // Criar uma nova coleção
-  async create(name, description, releaseYear) {
-    const novaColecao = await prisma.collection.create({
+  // Criar uma nova mutação
+  async create(
+    name, 
+    description,
+    howToGet,
+    location,
+    costOfCells,
+    imageUrl
+  ) {
+    const newMutacao = await prisma.mutacao.create({
       data: {
         name,
         description,
-        releaseYear,
+        howToGet,
+        location,
+        costOfCells,
+        imageUrl
       },
     });
 
-    return novaColecao;
+    return newMutacao;
   }
 
-  // Atualizar uma coleção
-  async update(id, name, description, releaseYear) {
-    const colecao = await this.findById(id);
+  // Atualizar uma mutação
+  async update(
+    id,
+    name,
+    description,
+    howToGet,
+    location,
+    costOfCells,
+    imageUrl
+  ) {
+    const mutacao = await this.findById(id);
 
-    if (!colecao) {
+    if (!mutacao) {
       return null;
     }
 
-    // Atualize a coleção existente com os novos dados
+    // Atualize a mutação existente com os novos dados
+    const data = {};
     if (name !== undefined) {
-      name = name;
+      data.name = name;
     }
     if (description !== undefined) {
-      description = description;
+      data.description = description;
     }
-    if (releaseYear !== undefined) {
-      releaseYear = releaseYear;
+    if (howToGet !== undefined) {
+      data.howToGet = howToGet;
+    }
+    if (location !== undefined) {
+      data.location = location;
+    }
+    if (costOfCells !== undefined) {
+      data.costOfCells = costOfCells;
+    }
+    if (imageUrl !== undefined) {
+      data.imageUrl = imageUrl;
     }
 
-    const colecaoAtualizada = await prisma.collection.update({
+    const mutacaoUpdated = await prisma.mutacao.update({
       where: {
         id: Number(id),
       },
-      data: {
-        name,
-        description,
-        releaseYear,
-      },
+      data,
     });
 
-    return colecaoAtualizada;
+    return mutacaoUpdated;
   }
 
-  // Remover uma coleção
+  // Remover uma mutação
   async delete(id) {
-    const colecao = await this.findById(id);
+    const mutacao = await this.findById(id);
 
-    if (!colecao) {
+    if (!mutacao) {
       return null;
     }
 
-    await prisma.collection.delete({
+    await prisma.mutacao.delete({
       where: {
         id: Number(id),
       },
@@ -95,4 +113,4 @@ class CollectionModel {
   }
 }
 
-export default new CollectionModel();
+export default new MutacoesModel();
