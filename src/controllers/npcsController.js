@@ -39,7 +39,8 @@ class NpcsController {
         description,
         location,
         functionNpc,
-        imageUrl
+        imageUrl,
+        personagemId
       } = req.body;
 
       // Verifica se todos os campos do npc foram fornecidos
@@ -48,7 +49,8 @@ class NpcsController {
         !description ||
         !location ||
         !functionNpc ||
-        !imageUrl
+        !imageUrl ||
+        !personagemId
       ) {
         return res
           .status(400)
@@ -61,7 +63,8 @@ class NpcsController {
         description,
         location,
         functionNpc,
-        imageUrl
+        imageUrl,
+        personagemId
       );
 
       if (!newNpc) {
@@ -84,7 +87,8 @@ class NpcsController {
         description,
         location,
         functionNpc,
-        imageUrl
+        imageUrl,
+        personagemId
       } = req.body;
 
       // Atualizar o npc
@@ -94,7 +98,8 @@ class NpcsController {
         description,
         location,
         functionNpc,
-        imageUrl
+        imageUrl,
+        personagemId
       );
 
       if (!updatedNpc) {

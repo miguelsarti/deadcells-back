@@ -1,114 +1,149 @@
-import CollectionModel from "../models/collectionModel.js";
+import InimigosModel from "../models/inimigosModel.js";
 
-class CollectionController {
-  // GET /colecoes
-  async getAllCollections(req, res) {
+class InimigosController {
+  // GET /api/inimigos
+  async getAllInimigos(req, res) {
     try {
-      const colecoes = await CollectionModel.findAll();
-      res.json(colecoes);
+      const inimigos = await InimigosModel.findAll();
+      res.json(inimigos);
     } catch (error) {
-      console.error("Erro ao buscar as coleções:", error);
-      res.status(500).json({ error: "Erro ao buscar as coleções" });
+      console.error("Erro ao buscar inimgos:", error);
+      res.status(500).json({ error: "Erro ao buscar inimigos" });
     }
   }
 
-  // GET /colecoes/:id
-  async getCollectionById(req, res) {
+  // GET /api/inimigos/:id
+  async getInimigoById(req, res) {
     try {
       const { id } = req.params;
 
-      const colecao = await CollectionModel.findById(id);
+      const inimigo = await InimigosModel.findById(id);
 
-      if (!colecao) {
-        return res.status(404).json({ error: "Coleção não encontrada!" });
+      if (!inimigo) {
+        return res.status(404).json({ error: "Inimigo não encontrado" });
       }
 
-      res.json(colecao);
+      res.json(inimigo);
     } catch (error) {
-      console.error("Erro ao buscar coleção:", error);
-      res.status(500).json({ error: "Erro ao buscar coleção!" });
+      console.error("Erro ao buscar inimigo:", error);
+      res.status(500).json({ error: "Erro ao buscar inimigo" });
     }
   }
 
-  // POST /colecoes
-  async createCollection(req, res) {
+  // POST /api/inimigos
+  async createInimigos(req, res) {
     try {
       // Validação básica
-      const { name, description, releaseYear } = req.body;
+      const {
+    name,
+    description,
+    location,
+    drop,
+    isBoss,
+    imageUrl,
+    personagemId
+      } = req.body;
 
-      // Verifica se todos os campos da coleção foram fornecidos
-      if (!name || !releaseYear) {
-        return res.status(400).json({
-          error: "Os campos nome e ano de lançamento são obrigatórios",
-        });
+      console.log("Name", name);
+      console.log("Description", description);
+      console.log("Location", location);
+      console.log("Drop", drop);
+      console.log("isBoss", isBoss);
+      console.log("imageUrl", imageUrl);
+      console.log("personagemId", personagemId);
+      
+
+      // Verifica se todos os campos do inimigo foram fornecidos
+      if (
+        !name ||
+        !description ||
+        !location ||
+        !drop ||
+        !imageUrl ||
+        !personagemId
+      ) {
+        return res
+          .status(400)
+          .json({ error: "Todos os campos são obrigatórios" });
       }
 
-      // Criar a nova coleção
-      const newCollection = await CollectionModel.create(
-        name,
-        description,
-        releaseYear
+      // Criar o novo inimigo
+      const newInimigo = await InimigosModel.create(
+    name,
+    description,
+    location,
+    drop,
+    isBoss,
+    imageUrl,
+    personagemId
       );
 
-      if (!newCollection) {
-        return res.status(400).json({ error: "Erro ao criar coleção" });
+      if (!newInimigo) {
+        return res.status(400).json({ error: "Erro ao criar inimigo" });
       }
 
-      res.status(201).json({
-        message: "Coleção criada com sucesso",
-        newCollection,
-      });
+      res.status(201).json(newInimigo);
     } catch (error) {
-      console.error("Erro ao criar coleção:", error);
-      res.status(500).json({ error: "Erro ao criar coleção" });
+      console.error("Erro ao criar inimigo:", error);
+      res.status(500).json({ error: "Erro ao criar inimigo" });
     }
   }
 
-  // PUT /colecoes/:id
-  async updateCollection(req, res) {
+  // PUT /api/inimigos/:id
+  async updateInimigo(req, res) {
     try {
       const { id } = req.params;
-      const { name, description, releaseYear } = req.body;
+      const {
+    name,
+    description,
+    location,
+    drop,
+    isBoss,
+    imageUrl,
+    personagemId
+      } = req.body;
 
-      // Atualizar a coleção
-      const updatedCollection = await CollectionModel.update(
+      // Atualizar o inimigo
+      const updatedInimigo = await InimigosModel.update(
         id,
-        name,
-        description,
-        releaseYear
+    name,
+    description,
+    location,
+    drop,
+    isBoss,
+    imageUrl,
+    personagemId
       );
 
-      if (!updatedCollection) {
-        return res.status(404).json({ error: "Coleção não encontrada" });
+      if (!updatedInimigo) {
+        return res.status(404).json({ error: "Inimigo não encontrado" });
       }
 
-      res.json(updatedCollection);
+      res.json(updatedInimigo);
     } catch (error) {
-      console.error("Erro ao atualizar coleção:", error);
-      res.status(500).json({ error: "Erro ao atualizar coleção!" });
+      console.error("Erro ao atualizar inimigo:", error);
+      res.status(500).json({ error: "Erro ao atualizar inimigo" });
     }
   }
 
-  // DELETE /colecoes/:id
-  async deleteCollection(req, res) {
+  // DELETE /api/inimigos/:id
+  async deleteInimigo(req, res) {
     try {
       const { id } = req.params;
 
-      // Remover a coleção
-      const result = await CollectionModel.delete(id);
+      // Remover o inimigo
+      const result = await InimigosModel.delete(id);
 
       if (!result) {
-        return res.status(404).json({ error: "Coleção não encontrada!" });
+        return res.status(404).json({ error: "Inimigo não encontrado" });
       }
 
-      res.status(200).json({
-        message: "Coleção removida com sucesso",
-      });
+      res.status(204).end(); // Resposta sem conteúdo
     } catch (error) {
-      console.error("Erro ao remover coleção:", error);
-      res.status(500).json({ error: "Erro ao remover coleção!" });
+      console.error("Erro ao remover inimigo:", error);
+      res.status(500).json({ error: "Erro ao remover inimigo" });
     }
   }
 }
 
-export default new CollectionController();
+export default new InimigosController();

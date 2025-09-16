@@ -1,66 +1,122 @@
 import prisma from "../../prisma/prisma.js";
 
-class UserModel {
-  // Obter todos os usuários
+class InimigosModel {
+  // Obter todos os inimigos
   async findAll() {
-    const users = await prisma.user.findMany();
+    const inimigos = await prisma.inimigo.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-    return users;
+    console.log(inimigos);
+
+    return inimigos;
   }
 
-  // Obter um usuário pelo ID
+  // Obter um inimgo pelo ID
   async findById(id) {
-    const user = await prisma.user.findUnique({
+    const inimigo = await prisma.inimigo.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    return user;
+    return inimigo;
   }
 
-  // Obter um usuário pelo email
-  async findByEmail(email) {
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+  // Criar um novo inimigo
+  async create(
+    name,
+    description,
+    location,
+    drop,
+    isBoss,
+    imageUrl,
+    personagemId
+  ) {
+  const newInimigo = await prisma.inimigo.create({
+    data: {
+    name,
+    description,
+    location,
+    drop,
+    isBoss,
+    imageUrl,
+    personagemId
+    },
+  });
 
-    return user;
-  }
-
-  // Criar um novo usuário
-  async create(data) {
-    const user = await prisma.user.create({
-      data,
-    });
-
-    return user;
-  }
-
-  // Atualizar um usuário
-  async update(id, data) {
-    const user = await prisma.user.update({
-      where: {
-        id: Number(id),
-      },
-      data,
-    });
-
-    return user;
-  }
-
-  // Excluir um usuário
-  async delete(id) {
-    await prisma.user.delete({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    return true;
-  }
+  return newInimigo;
 }
 
-export default new UserModel();
+  // Atualizar um inimigo
+  async update(
+  id,
+    name,
+    description,
+    location,
+    drop,
+    isBoss,
+    imageUrl,
+    personagemId
+) {
+  const inimigo = await this.findById(id);
+
+  if (!inimigo) {
+    return null;
+  }
+
+  // Atualize o inimigo existente com os novos dados
+  const data = {};
+  if (name !== undefined) {
+    data.name = name;
+  }
+  if (description !== undefined) {
+    data.description = description;
+  }
+  if (location !== undefined) {
+    data.location = location;
+  }
+  if (drop !== undefined) {
+    data.drop = drop;
+  }
+    if (isBoss !== undefined) {
+    data.isBoss = isBoss;
+  }
+  if (imageUrl !== undefined) {
+    data.imageUrl = imageUrl;
+  }
+    if (personagemId !== undefined) {
+    data.personagemId = personagemId;
+  }
+
+  const inimigoUpdated = await prisma.inimigo.update({
+    where: {
+      id: Number(id),
+    },
+    data,
+  });
+
+  return inimigoUpdated;
+}
+
+  // Remover um inimigo
+  async delete (id) {
+  const inimigo = await this.findById(id);
+
+  if (!inimigo) {
+    return null;
+  }
+
+  await prisma.inimigo.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  return true;
+}
+}
+
+export default new InimigosModel();

@@ -32,16 +32,16 @@ class PersonagensController {
     try {
       // Validação básica
       const {
-        name,
+        title,
       } = req.body;
 
-      if (!name) {
+      if (!title) {
         return res.status(400).json({ error: "Todos os campos são obrigatórios" });
       }
 
       // Criar o novo personagem
       const newPersonagem = await PersonagensModel.create(
-        name,
+        title,
       );
 
       if (!newPersonagem) {
@@ -60,14 +60,14 @@ class PersonagensController {
     try {
       const { id } = req.params;
       const {
-        name,
+        title,
 
       } = req.body;
 
       // Atualizar o personagem
       const updatedPersonagem = await PersonagensModel.update(
         id,
-        name,
+        title,
 
       );
 

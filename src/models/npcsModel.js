@@ -31,7 +31,8 @@ class NpcsModel {
     description,
     location,
     functionNpc,
-    imageUrl
+    imageUrl,
+    personagemId
   ) {
   const newNpc = await prisma.npc.create({
     data: {
@@ -39,7 +40,8 @@ class NpcsModel {
       description,
       location,
       functionNpc,
-      imageUrl
+      imageUrl,
+      personagemId
     },
   });
 
@@ -53,7 +55,8 @@ class NpcsModel {
   description,
   location,
   functionNpc,
-  imageUrl
+  imageUrl,
+  personagemId
 ) {
   const npc = await this.findById(id);
 
@@ -77,6 +80,9 @@ class NpcsModel {
   }
   if (imageUrl !== undefined) {
     data.imageUrl = imageUrl;
+  }
+    if (personagemId !== undefined) {
+    data.personagemId = personagemId;
   }
 
   const npcUpdated = await prisma.npc.update({
